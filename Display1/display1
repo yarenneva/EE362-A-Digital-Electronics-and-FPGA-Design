@@ -1,0 +1,56 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    13:51:48 11/04/2021 
+// Design Name: 
+// Module Name:    display1 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+module display_top(dataIn,clk,rst,anode,sevenSeg);
+
+input [7:0] dataIn;
+input rst,clk;
+output reg [3:0] anode;
+output  [7:0] sevenSeg;
+
+reg [15:0] number,numberNext;
+//reg [3:0] anodeNext;
+
+wire [3:0] anode_wire;
+
+
+SevenSegFourDig S1(.in(number),.sevenSeg(sevenSeg),.anode(anode_wire),.rst(rst),.clk(clk));
+
+
+always @(posedge clk) begin
+	number <= #1 numberNext;
+end
+always @(*)begin
+	//anodeNext=anode;
+	numberNext=number;
+	if(rst)begin
+		anode=4'b0000;
+		numberNext=16'b000000000000000;
+		
+	end
+	else begin
+		anode=anode_wire;
+		numberNext={2'b00, dataIn[7:6],2'b00, dataIn[5:4],2'b00, dataIn[3:2],2'b00, dataIn[1:0]};
+	end
+
+end
+
+
+endmodule
